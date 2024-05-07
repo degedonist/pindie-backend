@@ -1,13 +1,27 @@
+const category = require('../models/category');
 const categories = require('../models/category');
 
 const findAllCategories = async (req, res, next) => {
+  console.log("GET /categories");
   req.categoriesArray = await categories.find({});
   next();
 };
 
+const checkIsCategoryExists = async (req, res, next) => {
+  const isInArray = req.categoriesArray.find((category) => {
+    return req.body.name === category.name;
+  });
+  if (isInArray) {
+    res.setHeader("Content-Type", "application/json");
+        res.status(400).send(JSON.stringify({ message: "Категория с таким названием уже существует" }));
+  } else {
+    next();
+  }
+};
+
 const findCategoryById = async (req, res, next) => {
   try {
-      req.game = await games.findById(req.params.id);
+      req.category = await category.findById(req.params.id);
   next();
   } catch (error) {
       res.setHeader("Content-Type", "application/json");
@@ -27,4 +41,33 @@ const createCategory = async (req, res, next) => {
   }
 };
 
-module.exports = {findAllCategories, createCategory, findCategoryById};
+const updateCategory = async (req, res, next) => {
+  try {
+    req.category = await categories.findByIdAndUpdate(req.params.id, req.body);
+    next();
+  } catch(error) {
+    res.setHeader("Content-Type", "application/json");
+    res.status(400).send(JSON.stringify({message: "Ошибка обновления категории"}));
+  };
+};
+
+const deleteCategory = async (req, res, next) => {
+  try {
+    req.category = await categories.findByIdAndDelete(req.params.id);
+    next();
+  } catch(error) {
+    res.setHeader("Content-Type", "application/json");
+    res.status(400).send(JSON.stringify({ message: "Ошибка удаления игры" }));
+  };
+};
+
+const checkEmptyName = async (req, res, next) => {
+  if (!req.name) {
+    res.setHeader("Content-Type", "application/json");
+    res.status(400).send(JSON.stringify({ message: "Укажите название категории" }))
+  } else {
+    next();
+  }
+}
+
+module.exports = {findAllCategories, createCategory, findCategoryById, updateCategory, deleteCategory, checkIsCategoryExists, checkEmptyName};

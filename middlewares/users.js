@@ -7,7 +7,7 @@ const findAllUsers = async (req, res, next) => {
 
 const findUserById = async (req, res, next) => {
   try {
-      req.game = await games.findById(req.params.id);
+      req.user = await users.findById(req.params.id);
   next();
   } catch (error) {
       res.setHeader("Content-Type", "application/json");
@@ -27,4 +27,33 @@ const createUser = async (req, res, next) => {
   }
 };
 
-module.exports = {findAllUsers, createUser, findUserById};
+const updateUser = async (req, res, next) => {
+  try {
+    req.user = await users.findByIdAndUpdate(req.params.id, req.body);
+    next();
+  } catch(error) {
+    res.setHeader("Content-Type", "application/json");
+    res.status(400).send(JSON.stringify({message: "Ошибка обновления категории"}));
+  };
+};
+
+const deleteUser = async (req, res, next) => {
+  try {
+    req.user = await users.findByIdAndDelete(req.params.id);
+    next();
+  } catch(error) {
+    res.setHeader("Content-Type", "application/json");
+    res.status(400).send(JSON.stringify({ message: "Ошибка удаления пользователя" }));
+  };
+};
+
+const checkEmptyFields = async (req, res, next) => {
+    if (req.method === "POST" ? (!req.body.username || !req.body.password || !req.body.email) : (!req.body.username || !req.body.email)) {
+      res.setHeader("Content-Type", "application/json");
+      res.status(400).send(JSON.stringify({ message: "Заполните все поля" }));
+    } else {
+      next();
+    };
+};
+
+module.exports = {findAllUsers, createUser, findUserById, updateUser, deleteUser, checkEmptyFields};
