@@ -1,13 +1,14 @@
 const users = require('../models/user');
+const bcrypt = require('bcryptjs');
 
 const findAllUsers = async (req, res, next) => {
-  req.usersArray = await users.find({});
+  req.usersArray = await users.find({}, { password: 0 });
   next();
 };
 
 const findUserById = async (req, res, next) => {
   try {
-      req.user = await users.findById(req.params.id);
+      req.user = await users.findById(req.params.id, { password: 0 });
   next();
   } catch (error) {
       res.setHeader("Content-Type", "application/json");
@@ -16,9 +17,7 @@ const findUserById = async (req, res, next) => {
 };
 
 const createUser = async (req, res, next) => {
-  console.log("POST /users");
   try {
-    console.log(req.body);
     req.user = await users.create(req.body);
     next();
   } catch (error) {
@@ -56,4 +55,28 @@ const checkEmptyFields = async (req, res, next) => {
     };
 };
 
-module.exports = {findAllUsers, createUser, findUserById, updateUser, deleteUser, checkEmptyFields};
+const checkIsUserExists = async (req, res, next) => {
+  const email = req.body;
+
+  const existentialCrisis = users.findOne({email})
+
+  if (!existentialCrisis) {
+    next();
+  } else {
+    res.setHeader("Content-Type", "application/json");
+    res.status(400).send(JSON.stringify({ message: "Такой пользователь уже существует" }));
+  }
+}
+
+const hashPassword = async (req, res, next) => {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(req.body.password, salt);
+    req.body.password = hash;
+    next();
+  } catch (error) {
+    res.status(400).send({ message: "Ошибка хеширования пароля" });
+  }
+};
+
+module.exports = {findAllUsers, createUser, findUserById, updateUser, deleteUser, checkEmptyFields, checkIsUserExists, hashPassword};

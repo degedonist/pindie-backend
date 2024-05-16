@@ -7,6 +7,7 @@ const categoriesRouter = require('./routes/categories');
 
 const connectToDatabase = require('./database/connect');
 const cors = require('./middlewares/cors');
+const apiRouter = require('./routes/apiRouter');
 
 const app = express();
 const PORT = 3000;
@@ -17,9 +18,7 @@ app.use(
   cors, 
   bodyParser.json(),
   express.static(path.join(__dirname, 'public')),
-  usersRouter, 
-  gamesRouter, 
-  categoriesRouter
+  apiRouter
 );
 
 console.log(`HOSTED AT: http://localhost:${PORT}/`);
