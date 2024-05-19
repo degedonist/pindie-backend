@@ -2,7 +2,6 @@ const category = require('../models/category');
 const categories = require('../models/category');
 
 const findAllCategories = async (req, res, next) => {
-  console.log("GET /categories");
   req.categoriesArray = await categories.find({});
   next();
 };
@@ -30,7 +29,6 @@ const findCategoryById = async (req, res, next) => {
 };
 
 const createCategory = async (req, res, next) => {
-  console.log("POST /categories");
   try {
     console.log(req.body);
     req.category = await categories.create(req.body);
