@@ -8,6 +8,7 @@ const checkAuth = (req, res, next) => {
     }
 
     const token = authorization.replace('Bearer ', '');
+
     try {
         req.user = jwt.verify(token, 'some-secret-key');
     } catch(error) {

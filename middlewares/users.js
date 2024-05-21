@@ -56,11 +56,11 @@ const checkEmptyFields = async (req, res, next) => {
 };
 
 const checkIsUserExists = async (req, res, next) => {
-  const email = req.body;
+  const email = req.body.email;
 
-  const existentialCrisis = users.findOne({email})
+  const existentialCrisis = users.findOne({email: email})
 
-  if (!existentialCrisis) {
+  if (existentialCrisis) {
     next();
   } else {
     res.setHeader("Content-Type", "application/json");
@@ -79,4 +79,13 @@ const hashPassword = async (req, res, next) => {
   }
 };
 
-module.exports = {findAllUsers, createUser, findUserById, updateUser, deleteUser, checkEmptyFields, checkIsUserExists, hashPassword};
+const userData = async (req, res, next) => {
+  try {
+    req.user = await users.findById(req.user._id, 'username email');
+    next();
+  } catch(error) {
+    res.status(401).send({ message: "Необходима авторизация" });
+  }
+}
+
+module.exports = {findAllUsers, createUser, findUserById, updateUser, deleteUser, checkEmptyFields, checkIsUserExists, hashPassword, userData};
