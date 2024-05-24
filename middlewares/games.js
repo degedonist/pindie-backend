@@ -109,13 +109,18 @@ if (req.body.users.length - 1 === req.game.users.length) {
 };
 
 const checkIsGameExists = async (req, res, next) => {
+  const current = req.body;
+  
   const isInArray = req.gamesArray.find((game) => {
-    return req.body.name === game.name
+    return ((current.link === game.link) || (current.title === game.title))
   });
+
   if (isInArray) {
     res.setHeader("Content-Type", "application/json");
     res.status(400).send(JSON.stringify({ message: "Такая игра уже существует" }));
-  };
+  } else {
+    next();
+  }
 };
 
 const checkIsVoteRequest = async (req, res, next) => {
