@@ -15,13 +15,4 @@
   "email": "jav@example.com",
   "password": "$2a$10$g6PgxfOv1p0xVAi1FCckRuolYB5ImwazvVVhNVisaoxDI9NuAE8oi",
   "__v": 0
-},
-{
-  "_id": {
-    "$oid": "6649ee3c1f4fbcd9739053b1"
-  },
-  "username": "degedonist",
-  "email": "kostikepta06@gmail.com",
-  "password": "$2a$10$stpuRDDGNLFxNKreV98IyeoPRq7OznmP9frUYUnxvVN5DiHb7DLdC",
-  "__v": 0
 }]
